@@ -14,4 +14,9 @@
 		<author>TestAuthor1</author>
 		<title>TestTitle1</title>
 	</book>
+	<book>
+		<author>AuthorTest</author>
+		<title>TitleTest1</title>
+		<pagenumber>9</pagenumber>
+	</book>
 </booklist>

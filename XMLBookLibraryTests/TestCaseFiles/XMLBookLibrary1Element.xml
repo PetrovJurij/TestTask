@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<bookslist>
-	<books>
+<booklist>
+	<book>
 		<author>TestAuthor</author>
+		<title>TestTitle</title>
 		<pagenumber>1</pagenumber>
-	</books>
-</bookslist>
+	</book>
+</booklist>

@@ -1,42 +1,65 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Xml.Linq;
+using XMLBookLibrary.Domain;
 
 namespace XMLBookLibrary
 {
     public class XMLBookLibrary
     {
         private XElement _document;
-        private IEnumerable<Book> _books;
-        public XMLBookLibrary() { }
+        private string _path;
+        private List<Book> _books = new List<Book>();
+
         public XMLBookLibrary(string path)
         {
-            _document = XElement.Load(path);
+            _path = path;
+            _document = XElement.Load(_path);
+            LoadBooks();
         }
-        public XMLBookLibrary(XElement document)
+        public XMLBookLibrary(XDocument document)
         {
-            _document = document;
+            _path = document.BaseUri;
+            _document = document.Root;
+            LoadBooks();
         }
 
-        public IEnumerable<Book> GetBooks => _books;
+        public IEnumerable<Book> Books => _books;
 
         public IEnumerable<Book> LoadBooks()
         {
-            _books = from book in _document.Descendants("book")
-                     select new Book((string)book.Attribute("author"),
-                                     (string)book.Attribute("title"),
-                                     (int)book.Attribute("pagenumber"));
+            var authorElementName = XMLStructureBuilder.GetMemberName((Book b) => b.Author).ToLower();
+            var titleElementName = XMLStructureBuilder.GetMemberName((Book b) => b.Title).ToLower();
+            var pageNumberElementName = XMLStructureBuilder.GetMemberName((Book b) => b.PageNumber).ToLower();
+
+            var books = from book in _document.Descendants(nameof(Book).ToLower())
+                        where book.Elements(authorElementName).Any() 
+                        && book.Elements(titleElementName).Any()
+                        && book.Elements(pageNumberElementName).Any()
+                        select new Book((string)book.Element(authorElementName),
+                                        (string)book.Element(titleElementName),
+                                        (int)book.Element(pageNumberElementName));
+            _books = books.ToList();
             return _books;
         }
 
         public void AddBook(string authorName, string title, int pageNumber)
         {
-            _books.Append(new Book(authorName, title, pageNumber));
+             _books.Add(new Book(authorName, title, pageNumber));
         }
 
-        public void SaveToFile()
+
+        public void Save()
         {
+            _document = XMLStructureBuilder.CreateXMLStructure(_books);
+            var xmlDocument = new XDocument(_document);
+            xmlDocument.Save(_path);
+        }
+        public void SaveToFile(string path)
+        {
+            var document = XMLStructureBuilder.CreateXMLStructure(_books);
+            var xmlDocument = new XDocument(document);
+            xmlDocument.Save(path);
         }
 
     }
