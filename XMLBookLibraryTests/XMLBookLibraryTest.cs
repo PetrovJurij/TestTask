@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using XMLBookLibrary.Domain;
 
 namespace XMLBookLibraryTests
@@ -17,6 +18,23 @@ namespace XMLBookLibraryTests
 
         [TestCase("XMLBookLibrary.xml", 3)]
         [TestCase("XMLBookLibrary1Element.xml", 1)]
+        public void XMLBookLibrary_DocumentConstructor_AmountMatches(string filePath, int expectedAmount)
+        {
+            //Arrange
+            var path = Path.Combine(_filePath, filePath);
+            var document = XDocument.Load(path);
+            var xmlLibrary = new XMLBookLibrary.XMLBookLibrary(document);
+
+            //Act
+            var books = xmlLibrary.LoadBooks();
+
+            //Assert
+            Assert.That(books, Is.Not.Empty);
+            Assert.That(expectedAmount, Is.EqualTo(books.Count()));
+        }
+
+        [TestCase("XMLBookLibrary.xml", 3)]
+        [TestCase("XMLBookLibrary1Element.xml", 1)]
         public void XMLBookLibrary_LoadBooks_AmountMatches(string filePath, int expectedAmount)
         {
             //Arrange
@@ -30,7 +48,7 @@ namespace XMLBookLibraryTests
             Assert.That(expectedAmount, Is.EqualTo(books.Count()));
         }
 
-        [TestCase("XMLBookLibrary_ParsingException.xml")]
+        [TestCase("XMLBookLibrary_NoBooks.xml")]
         public void XMLBookLibrary_LoadBooks_Empty(string filePath)
         {
             //Arrange
@@ -64,6 +82,7 @@ namespace XMLBookLibraryTests
             //Assert
             CollectionAssert.AreEqual(expectedBooks, testBooks);
         }
+
         [TestCase("XMLBookLibrary_Save.xml")]
         public void XMLBookLibrary_Save_AllSaved(string fileName)
         {

@@ -11,6 +11,7 @@ namespace XMLBookLibrary.Domain
         {
             return ((MemberExpression)memberAccess.Body).Member.Name;
         }
+
         public static XElement CreateXMLStructure(IEnumerable<Book> books)
         {
             var structure = new XElement("booklist");

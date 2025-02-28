@@ -12,7 +12,6 @@
   <ItemGroup>
     <None Remove="TestCaseFiles\XMLBookLibrary.xml" />
     <None Remove="TestCaseFiles\XMLBookLibrary1Element.xml" />
-    <None Remove="TestCaseFiles\XMLBookLibrary_ParsingException.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +30,7 @@
     <Content Include="TestCaseFiles\XMLBookLibrary_Save_ExpectedStructure.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestCaseFiles\XMLBookLibrary_ParsingException.xml">
+    <Content Include="TestCaseFiles\XMLBookLibrary_NoBooks.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
