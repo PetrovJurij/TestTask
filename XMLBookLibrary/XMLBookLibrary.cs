@@ -48,6 +48,24 @@ namespace XMLBookLibrary
              _books.Add(new Book(authorName, title, pageNumber));
         }
 
+        public IEnumerable<Book> SortBooksByAuthorThenByTitle()
+        {
+            var sortedBooks = from book in _books
+                              orderby book.Author, book.Title
+                              select book;
+            _books = [.. sortedBooks];
+            return _books;
+        }
+
+        public IEnumerable<Book> SearchBooksByTitle(string title)
+        {
+            var searchBooks = from book in _books
+                              where book.Title.Contains(title, 
+                                      System.StringComparison.InvariantCultureIgnoreCase)
+                              select book;
+            return searchBooks;
+        }
+
 
         public void Save()
         {
