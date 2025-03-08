@@ -5,7 +5,7 @@ using System.Xml.Linq;
 
 namespace XMLBookLibrary.Domain
 {
-    internal class XMLStructureBuilder
+    internal class XMLStructureMapper
     {
         public static string GetMemberName<T, TValue>(Expression<Func<T, TValue>> memberAccess)
         {
@@ -17,15 +17,13 @@ namespace XMLBookLibrary.Domain
             var structure = new XElement("booklist");
             foreach (var book in books)
             {
-                structure.Add(new XElement(nameof(Book).ToLower(), 
-                    new XElement(nameof(book.Author).ToLower(),book.Author),
+                structure.Add(new XElement(nameof(Book).ToLower(),
+                    new XElement(nameof(book.Author).ToLower(), book.Author),
                     new XElement(nameof(book.Title).ToLower(), book.Title),
                     new XElement(nameof(book.PageNumber).ToLower(), book.PageNumber)
                     ));
             }
             return structure;
         }
-
-
     }
 }

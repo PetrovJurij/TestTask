@@ -1,16 +1,13 @@
-﻿namespace XMLBookLibrary.Domain
-{
-    public record class Book
-    {
-        public Book(string author, string title, int pageNumber)
-        {
-            Author = author;
-            Title = title;
-            PageNumber = pageNumber;
-        }
+﻿using System.Xml.Serialization;
 
-        public string Author { get; set; }
-        public string Title { get; set; }
-        public int PageNumber { get; set; }
+namespace XMLBookLibrary.Domain
+{
+    [XmlType("book")]
+    public record Book([property: XmlElement("author")] string Author,
+        [property: XmlElement("title")] string Title,
+        [property: XmlElement("pagenumber")] int PageNumber)
+    {
+        public Book() : this(string.Empty, string.Empty, 0) { }
     }
+
 }

@@ -15,7 +15,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="TestCaseFiles\XMLBookLibraryDuplicateBooks.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestCaseFiles\XMLBookLibrary_SaveWithXMLSerializer.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestCaseFiles\XMLBookLibrary_Save.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestCaseFiles\XMLBookLibrary_SaveWithXMLSerializerToFile_ExpectedStructure.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="TestCaseFiles\XMLBookLibrary_Sort.xml">

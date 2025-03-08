@@ -35,6 +35,8 @@ namespace XMLBookLibraryTests
 
         [TestCase("XMLBookLibrary.xml", 3)]
         [TestCase("XMLBookLibrary1Element.xml", 1)]
+        [TestCase("XMLBookLibrary_NoBooks.xml", 0)]
+        [TestCase("XMLBookLibraryDuplicateBooks.xml", 4)]
         public void XMLBookLibrary_LoadBooks_AmountMatches(string filePath, int expectedAmount)
         {
             //Arrange
@@ -44,21 +46,32 @@ namespace XMLBookLibraryTests
             var books = xmlLibrary.LoadBooks();
 
             //Assert
-            Assert.That(books, Is.Not.Empty);
             Assert.That(expectedAmount, Is.EqualTo(books.Count()));
         }
 
-        [TestCase("XMLBookLibrary_NoBooks.xml")]
-        public void XMLBookLibrary_LoadBooks_Empty(string filePath)
+        [TestCase("XMLBookLibrary.xml", 3)]
+        [TestCase("XMLBookLibrary1Element.xml", 1)]
+        [TestCase("XMLBookLibraryDuplicateBooks.xml", 4)]
+        public void XMLBookLibrary_LoadBooksXMLSerializer_AmountMatches(string filePath, int expectedAmount)
         {
             //Arrange
             var xmlLibrary = new XMLBookLibrary.XMLBookLibrary(Path.Combine(_filePath, filePath));
 
             //Act
-            var books = xmlLibrary.LoadBooks();
+            var books = xmlLibrary.LoadBooksXMLSerializer();
 
             //Assert
-            Assert.IsEmpty(books);
+            Assert.That(books.Count(), Is.EqualTo(expectedAmount));
+        }
+
+        [TestCase("XMLBookLibrary_NoBooks.xml", 0)]
+        public void XMLBookLibrary_LoadBooksXMLSerializer_ThrowsInvalidOperationException(string filePath, int expectedAmount)
+        {
+            //Arrange
+            var xmlLibrary = new XMLBookLibrary.XMLBookLibrary(Path.Combine(_filePath, filePath));
+
+            //Act && Assert
+            Assert.That(() => xmlLibrary.LoadBooksXMLSerializer(), Throws.InvalidOperationException);
         }
 
         [TestCase("XMLBookLibrary_Save_ExpectedStructure.xml", "XMLBook.xml")]
@@ -94,6 +107,45 @@ namespace XMLBookLibraryTests
             //Act
             initialXmlLibrary.AddBook("AuthorTest", "TitleTest3", 10);
             initialXmlLibrary.Save();
+            var amountOfBooks = initialXmlLibrary.LoadBooks();
+
+            //Assert
+            Assert.That(amountOfBooks.Count(), Is.EqualTo(expectedAmountOfBooks));
+        }
+
+        [TestCase("XMLBookLibrary_SaveWithXMLSerializerToFile_ExpectedStructure.xml", "XMLBook_1.xml")]
+        public void XMLBookLibrary_SaveWithXMLSerializerToFile_AllSaved(string expectedFileName, string fileName)
+        {
+            //Arrange
+            var initialPath = Path.Combine(_filePath, _defaultFile);
+            var tastPath = Path.Combine(_filePath, fileName);
+            var initialXmlLibrary = new XMLBookLibrary.XMLBookLibrary(initialPath);
+
+            var expectedPath = Path.Combine(_filePath, expectedFileName);
+            var expectedXmlLibrary = new XMLBookLibrary.XMLBookLibrary(expectedPath);
+
+            //Act
+            initialXmlLibrary.AddBook("AuthorTest", "TitleTest1", 9);
+            initialXmlLibrary.SaveWithXMLSerializerToFile(tastPath);
+
+            var testBooks = new XMLBookLibrary.XMLBookLibrary(tastPath).Books;
+            var expectedBooks = expectedXmlLibrary.Books;
+
+            //Assert
+            CollectionAssert.AreEqual(expectedBooks, testBooks);
+        }
+
+        [TestCase("XMLBookLibrary_SaveWithXMLSerializer.xml")]
+        public void XMLBookLibrary_SaveWithXMLSerializer_AllSaved(string fileName)
+        {
+            //Arrange
+            var expectedAmountOfBooks = 4;
+            var initialPath = Path.Combine(_filePath, fileName);
+            var initialXmlLibrary = new XMLBookLibrary.XMLBookLibrary(initialPath);
+
+            //Act
+            initialXmlLibrary.AddBook("AuthorTest", "TitleTest3", 10);
+            initialXmlLibrary.SaveWithXMLSerializer();
             var amountOfBooks = initialXmlLibrary.LoadBooks();
 
             //Assert
@@ -151,18 +203,16 @@ namespace XMLBookLibraryTests
         {
             public override int Compare(Book? x, Book? y)
             {
-                int result = 0;
                 if (x == null || y == null)
                 {
-                    return result;
+                    return 0;
                 }
-                result = x.Author.CompareTo(y?.Author);
-                if (result == 0)
+                if (x.Author.CompareTo(y?.Author) != 0)
                 {
-                    result = x.Title.CompareTo(y.Title);
+                    return 0;
                 }
 
-                return result;
+                return x.Title.CompareTo(y?.Title);
             }
         }
     }
